@@ -5,12 +5,7 @@
 
 #include "acceleration_structure.h"
 
-struct Leaf {
-    uint32_t next;
-    uint32_t id;
-};
-
-class Grid : AccelerationStructure
+class Grid : public AccelerationStructure
 {
 public:
     Grid();
@@ -23,6 +18,12 @@ public:
     HybridVector<uint32_t> query(const AABB& aabb) const;
     int tidy();
 private:
+
+    struct Leaf {
+        uint32_t next;
+        uint32_t id;
+    };
+
     uint32_t m_min_x, m_min_y;
     uint32_t m_max_x, m_max_y;
     uint32_t m_num_cells_x, m_num_cells_y;

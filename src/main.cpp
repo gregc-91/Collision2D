@@ -131,7 +131,7 @@ int main(int argc, char** argv)
     glfwSetErrorCallback(error_callback);
     glfwMakeContextCurrent(window);
 
-    simulation.setup(w, h);
+    simulation.setup(w, h, AccelerationStructureType::Grid);
     Renderer renderer(simulation.entities(), 640, 480);
     p_renderer = &renderer;
 

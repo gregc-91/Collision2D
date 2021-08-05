@@ -5,6 +5,7 @@
 
 #include "../DataStructures/aabb.h"
 #include "../AccelerationStructures/grid.h"
+#include "../AccelerationStructures/quadtree.h"
 
 struct Entity {
     AABB aabb;
@@ -17,7 +18,7 @@ class Simulation
 {
 public:
     Simulation();
-    void setup(uint32_t width, uint32_t height);
+    void setup(uint32_t width, uint32_t height, AccelerationStructureType type);
     void step();
     void reset();
     void pause();
@@ -28,7 +29,7 @@ public:
 
 private:
     std::vector<Entity> m_entities;
-    Grid m_grid;
+    AccelerationStructure* m_accel;
     uint32_t m_width;
     uint32_t m_height;
     bool m_paused;

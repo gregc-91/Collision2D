@@ -17,17 +17,23 @@ Simulation::Simulation()
 
 }
 
-void Simulation::setup(uint32_t width, uint32_t height)
+void Simulation::setup(uint32_t width, uint32_t height, AccelerationStructureType type)
 {
     srand(0x12345);
 
     m_width = width;
     m_height = height;
     m_paused = false;
-    m_grid = Grid(0, 0, width, height);
+    switch (type) {
+    case AccelerationStructureType::Grid:
+        m_accel = new Grid(0, 0, width, height);
+        break;
+    case AccelerationStructureType::Quadtree:
+        m_accel = new Quadtree(0, 0, width, height);
+        break;
+    }
 
     for (unsigned i = 0; i < 32000; i++) {
-
         AABB aabb;
         unsigned attempts = 0;
         do {
@@ -41,7 +47,11 @@ void Simulation::setup(uint32_t width, uint32_t height)
 
         if (attempts != 64) {
             m_entities.push_back(Entity(aabb));
-            m_grid.add(i, aabb);
+
+            switch (m_accel->m_type) {
+                case AccelerationStructureType::Grid: ((Grid*)m_accel)->add(i, aabb); break;
+                case AccelerationStructureType::Quadtree: ((Quadtree*)m_accel)->add(i, aabb); break;
+            }
         }
     }
 }
@@ -49,7 +59,12 @@ void Simulation::setup(uint32_t width, uint32_t height)
 bool Simulation::collision(uint32_t id, const AABB& aabb) const
 {
 #if 1
-    auto query = m_grid.query(aabb);
+    HybridVector<uint32_t> query;
+    switch (m_accel->m_type) {
+        case AccelerationStructureType::Grid: query = ((Grid*)m_accel)->query(aabb); break;
+        case AccelerationStructureType::Quadtree: query = ((Quadtree*)m_accel)->query(aabb); break;
+    }
+
     for (unsigned i = 0; i < query.size(); i++) {
         if (query[i] != id && aabb.overlaps(m_entities[query[i]].aabb)) {
             return true;
@@ -75,6 +90,7 @@ void Simulation::step()
             int delta_y = (rand() % 3) - 1;
 
             AABB new_aabb = aabb;
+
             new_aabb.move(delta_x, delta_y);
             
             if (new_aabb.min[0] < 0 || new_aabb.min[1] < 0 || 
@@ -83,7 +99,11 @@ void Simulation::step()
             }
 
             if (!collision(i, new_aabb)) {
-                m_grid.move(i, aabb, new_aabb);
+                switch (m_accel->m_type) {
+                    case AccelerationStructureType::Grid: ((Grid*)m_accel)->move(i, aabb, new_aabb); break;
+                    case AccelerationStructureType::Quadtree: ((Quadtree*)m_accel)->move(i, aabb, new_aabb); break;
+                }
+
                 aabb.move(delta_x, delta_y);
             }
         }
@@ -93,7 +113,7 @@ void Simulation::step()
 void Simulation::reset()
 {
     m_entities.clear();
-    setup(m_width, m_height);
+    setup(m_width, m_height, m_accel->m_type);
 }
 
 void Simulation::pause()
