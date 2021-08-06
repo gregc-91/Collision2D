@@ -27,6 +27,8 @@ The executable displays some animated particles:
 
 ![Running](resources/Collision2D_running.png)
 
+The particles move randomly but check for collisions with each other.
+
 The camera can be moved using a mouse or arrow keys, and zoomed with a mousewheel.
 
 ## Arguments
