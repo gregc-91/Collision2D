@@ -3,7 +3,7 @@ A project demonstrating acceleration structures for 2D collision detection.
 
 ## Requirements
 For Windows the recommended build environment is MSYS2 with MinGW. 
-The required packages which can be installed through MSYS2's package manager 'pacman' are:
+The required packages are:
 - OpenGL
 - GLFW
 
