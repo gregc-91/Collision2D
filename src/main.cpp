@@ -140,6 +140,7 @@ void parseArguments(int argc, char** argv)
         } else if (std::string("-quad").compare(argv[k]) == 0) {
             type = AccelerationStructureType::Quadtree;
         } else if (std::string("-n").compare(argv[k]) == 0) {
+            assert(k+1 < argc);
             n = atoi(argv[++k]);
         }
         k++;
