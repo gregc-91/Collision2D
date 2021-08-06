@@ -18,7 +18,7 @@ class Simulation
 {
 public:
     Simulation();
-    void setup(uint32_t width, uint32_t height, AccelerationStructureType type);
+    void setup(uint32_t width, uint32_t height, uint32_t n, AccelerationStructureType type);
     void step();
     void reset();
     void pause();
@@ -32,6 +32,7 @@ private:
     AccelerationStructure* m_accel;
     uint32_t m_width;
     uint32_t m_height;
+    uint32_t m_num_particles;
     bool m_paused;
 };
 

@@ -11,6 +11,8 @@
 
 uint32_t w = 2048;
 uint32_t h = 1024;
+uint32_t n = 64000;
+AccelerationStructureType type = AccelerationStructureType::Grid;
 
 Simulation simulation;
 Renderer* p_renderer;
@@ -115,8 +117,39 @@ void showFPS(GLFWwindow *p_window, double &last_time)
     }
 }
 
+void usage()
+{
+    printf("Usage:\n");
+    printf("    collision [<arguments>]\n");
+    printf("        arguments:\n");
+    printf("            -h         : display usage information\n");
+    printf("            -grid      : run using a grid acceleration structure (default)\n");
+    printf("            -quad      : run with a quadtree acceleration structure\n");
+    printf("            -n <N>     : set the number of particles (default 64000)\n");
+}
+
+void parseArguments(int argc, char** argv)
+{
+    int k = 1;
+    while (k < argc) {
+        if (std::string("-h").compare(argv[k]) == 0) {
+            usage();
+            exit(0);
+        } else if (std::string("-grid").compare(argv[k]) == 0) {
+            type = AccelerationStructureType::Grid;
+        } else if (std::string("-quad").compare(argv[k]) == 0) {
+            type = AccelerationStructureType::Quadtree;
+        } else if (std::string("-n").compare(argv[k]) == 0) {
+            n = atoi(argv[++k]);
+        }
+        k++;
+    }
+}
+
 int main(int argc, char** argv)
 {
+    parseArguments(argc, argv);
+
     uint8_t frame = 0;
     if (!glfwInit()) { exit(EXIT_FAILURE); }
 
@@ -131,7 +164,7 @@ int main(int argc, char** argv)
     glfwSetErrorCallback(error_callback);
     glfwMakeContextCurrent(window);
 
-    simulation.setup(w, h, AccelerationStructureType::Grid);
+    simulation.setup(w, h, n, type);
     Renderer renderer(simulation.entities(), 640, 480);
     p_renderer = &renderer;
 

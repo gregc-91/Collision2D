@@ -17,12 +17,13 @@ Simulation::Simulation()
 
 }
 
-void Simulation::setup(uint32_t width, uint32_t height, AccelerationStructureType type)
+void Simulation::setup(uint32_t width, uint32_t height, uint32_t n, AccelerationStructureType type)
 {
     srand(0x12345);
 
     m_width = width;
     m_height = height;
+    m_num_particles = n;
     m_paused = false;
     switch (type) {
     case AccelerationStructureType::Grid:
@@ -33,7 +34,7 @@ void Simulation::setup(uint32_t width, uint32_t height, AccelerationStructureTyp
         break;
     }
 
-    for (unsigned i = 0; i < 32000; i++) {
+    for (unsigned i = 0; i < n; i++) {
         AABB aabb;
         unsigned attempts = 0;
         do {
@@ -113,7 +114,7 @@ void Simulation::step()
 void Simulation::reset()
 {
     m_entities.clear();
-    setup(m_width, m_height, m_accel->m_type);
+    setup(m_width, m_height, m_num_particles, m_accel->m_type);
 }
 
 void Simulation::pause()
